@@ -1,28 +1,38 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container">
+    <SearchBar @searchBarChange="handleSearchBarChange"/>
+    <div class="row">
+      <VideoList :videos="videos" @videoItemSelected="handleVideoItemSelected"/>
+      <VideoDetail :video="selectedVideo"/>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import SearchBar from "@/components/SearchBar";
+import VideoList from "@/components/VideoList";
+import {searchYoutubeApi} from "@/services/searchYoutubeApi";
+import VideoDetail from "@/components/VideoDetail";
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  components: {VideoDetail, VideoList, SearchBar},
+  methods: {
+    async handleSearchBarChange(value) {
+      const res = await searchYoutubeApi(value);
+      this.videos = res.data.items;
+    },
+    handleVideoItemSelected(video) {
+      this.selectedVideo = video;
+    }
+  },
+  data() {
+    return {videos: [], selectedVideo: null};
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
+
 </style>
+
